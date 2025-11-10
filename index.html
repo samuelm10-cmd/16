@@ -116,12 +116,16 @@
 
     <!-- Escena 2: Goku & Bulma con nube de diálogo -->
     <section id="scene-dialog" class="panel fade-in" data-hidden="true" role="region" aria-label="Goku y Bulma">
-      <img class="char char-left" src="goku_bulma_left.png" alt="Goku y Bulma" onerror="this.style.display='none'" />
-      <div style="max-width:900px; padding-left:min(42vw,420px);">
-        <div id="bubble" class="bubble title">No existen galaxias que igualen tu brillo 💙</div>
-        <div class="nav">
-          <button class="btn btn-outline btn-small" id="backToCapsule">⬅ Atrás</button>
-          <button class="btn btn-green btn-small" id="toJungkook">➡ Siguiente</button>
+      <div class="scene-split">
+        <div class="img-wrap">
+          <img class="char-fluid" src="goku_bulma_left.png" alt="Goku y Bulma" onerror="this.style.display='none'" />
+        </div>
+        <div class="text">
+          <div id="bubble" class="bubble title">No existen galaxias que igualen tu brillo 💙</div>
+          <div class="nav">
+            <button class="btn btn-outline btn-small" id="backToCapsule">⬅ Atrás</button>
+            <button class="btn btn-green btn-small" id="toJungkook">➡ Siguiente</button>
+          </div>
         </div>
       </div>
     </section>
@@ -140,13 +144,17 @@
 
     <!-- Escena 4: Goku con tulipanes morados -->
     <section id="scene-tulips" class="panel fade-in" data-hidden="true" role="region" aria-label="Goku entrega tulipanes morados">
-      <img class="char char-left" src="goku_tulips.png" alt="Goku con tulipanes morados" onerror="this.style.display='none'" />
-      <div style="padding-left:min(42vw,420px); display:grid; gap:10px">
-        <div class="title" style="opacity:.95">Cada flor es un pensamiento bonito que tengo por ti 🌷</div>
-        <div class="title" style="opacity:.95; color:#e2e8f0">Los tulipanes crecen, como lo que siento por ti 💙</div>
-        <div class="nav">
-          <button class="btn btn-outline btn-small" id="backToJK">⬅ Atrás</button>
-          <button class="btn btn-green btn-small" id="toLetter">➡ Ver Carta 💌</button>
+      <div class="scene-split">
+        <div class="img-wrap">
+          <img class="char-fluid" src="goku_tulips.png" alt="Goku con tulipanes morados" onerror="this.style.display='none'" />
+        </div>
+        <div class="text" style="display:grid; gap:10px">
+          <div class="title" style="opacity:.95">Cada flor es un pensamiento bonito que tengo por ti 🌷</div>
+          <div class="title" style="opacity:.95; color:#e2e8f0">Los tulipanes crecen, como lo que siento por ti 💙</div>
+          <div class="nav">
+            <button class="btn btn-outline btn-small" id="backToJK">⬅ Atrás</button>
+            <button class="btn btn-green btn-small" id="toLetter">➡ Ver Carta 💌</button>
+          </div>
         </div>
       </div>
     </section>
@@ -254,6 +262,7 @@
 
     // Botones de navegación / flujo
     $('#btnStart').addEventListener('click', async () => {
+      await resumeAudio();
       burstSmoke();
       setTimeout(()=>{ go('#scene-capsule'); }, 500);
     });
