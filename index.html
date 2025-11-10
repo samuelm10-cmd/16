@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Namekusei • Cumple Loquita</title>
+  <style>
+    :root{
+      --green:#1db954; --dark:#0b1220; --panel:#0f172a; --text:#f8fafc; --muted:#94a3b8;
+      --accent:#8b5cf6; --accent2:#22d3ee; --romance:#1e3a8a; /* azul oscuro vibes */
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0}
+    body{
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";
+      color:var(--text);
+      background:#000;
+      overflow:hidden;
+    }
+    /* Fondo Namekusei */
+    .bg{ position:fixed; inset:0; z-index:-3; background:url('background_namekusei.jpg') center/cover no-repeat fixed; filter:saturate(1.05) contrast(1.05) }
+    /* Nebulosa / galaxia para la carta final */
+    .galaxy{ position:fixed; inset:0; z-index:-2; pointer-events:none; opacity:0; transition:opacity .8s ease; background:
+        radial-gradient(1200px 800px at 30% 40%, rgba(34,211,238,.20), transparent 60%),
+        radial-gradient(900px 600px at 70% 60%, rgba(139,92,246,.18), transparent 65%),
+        radial-gradient(600px 600px at 50% 10%, rgba(255,255,255,.08), transparent 70%); animation: spin 80s linear infinite; mix-blend-mode: screen }
+    @keyframes spin{to{transform:rotate(360deg)}}
+
+    /* App container */
+    #app{ position:relative; height:100vh; width:100vw; display:grid; place-items:center; }
+    .veil{ position:absolute; inset:0; background:rgba(0,0,0,.35); z-index:-1 }
+
+    /* Botones */
+    .btn{ cursor:pointer; appearance:none; border:0; padding:16px 26px; border-radius:16px; font-weight:700; letter-spacing:.2px; transition:transform .08s ease, box-shadow .2s ease, background .2s }
+    .btn:active{ transform:translateY(1px) scale(.99) }
+    .btn-green{ background: linear-gradient(180deg, var(--green), #169b45); box-shadow:0 10px 24px rgba(29,185,84,.35)}
+    .btn-outline{ background:transparent; border:2px solid rgba(255,255,255,.25); color:#fff }
+    .btn-small{ padding:10px 14px; border-radius:12px; font-size:.95rem }
+
+    /* Tarjetas / paneles */
+    .panel{ background: linear-gradient(180deg, rgba(15,23,42,.86), rgba(15,23,42,.72)); border:1px solid rgba(255,255,255,.08); box-shadow: 0 20px 60px rgba(0,0,0,.5); border-radius:24px; padding:24px; backdrop-filter: blur(8px)}
+
+    /* Tipografías */
+    h1,h2,h3{ margin:0 0 8px }
+    .title{ font-size: clamp(28px, 4vw, 40px); text-shadow:0 2px 20px rgba(0,0,0,.45) }
+    .subtitle{ color:var(--muted) }
+
+    /* Elementos visuales escena 1: cápsula */
+    .capsule{ width:min(55vmin,520px); height:min(28vmin,260px); border-radius:200px; background: linear-gradient(135deg, #9ae6b4, #60a5fa); position:relative; box-shadow: inset 0 0 40px rgba(255,255,255,.35), 0 18px 60px rgba(0,0,0,.55); animation: float 4.8s ease-in-out infinite }
+    .capsule:before{ content:""; position:absolute; inset:8px; border-radius:180px; background: radial-gradient(120px 80px at 30% 30%, rgba(255,255,255,.6), transparent 60%), linear-gradient(180deg, rgba(255,255,255,.08), rgba(0,0,0,.15)) }
+    .capsule:after{ content:""; position:absolute; inset:auto 18% 10% 18%; height:12px; border-radius:12px; background:linear-gradient(90deg, rgba(0,0,0,.25), rgba(255,255,255,.35), rgba(0,0,0,.25)); filter:blur(1px) }
+    @keyframes float{ 0%,100%{ transform:translateY(-6px) } 50%{ transform:translateY(6px) }}
+
+    /* Humo */
+    .smoke{ position:fixed; inset:0; pointer-events:none; z-index:50; overflow:hidden }
+    .puff{ position:absolute; width:80px; height:80px; border-radius:50%; background: radial-gradient(circle at 30% 30%, rgba(255,255,255,.8), rgba(255,255,255,.25) 50%, rgba(255,255,255,0) 70%); opacity:0; animation: puff 900ms ease-out forwards }
+    @keyframes puff{ 0%{ transform:translate(var(--x,0), var(--y,0)) scale(.4); opacity:.0 } 30%{ opacity:.6 } 100%{ transform:translate(calc(var(--x,0) + 0px), calc(var(--y,0) - 160px)) scale(1.15); opacity:0 }}
+
+    /* Nube de diálogo */
+    .bubble{ position:relative; background:rgba(255,255,255,.09); border:1px solid rgba(255,255,255,.18); padding:16px 18px; border-radius:16px; max-width:min(66ch, 80vw); backdrop-filter:blur(6px) }
+    .bubble:after{ content:""; position:absolute; left:22px; bottom:-12px; width:22px; height:22px; background:inherit; border-left:inherit; border-bottom:inherit; transform:rotate(45deg)}
+
+    /* Imágenes de personajes */
+    .char{ max-height:60vh; max-width:70vw; object-fit:contain; filter:drop-shadow(0 18px 38px rgba(0,0,0,.6)) }
+    .char-right{ position:absolute; right:5%; bottom:8% }
+    .char-left{ position:absolute; left:3%; bottom:6% }
+
+    /* Pastel brillante */
+    .glow{ filter: drop-shadow(0 0 24px rgba(255,255,255,.6)) drop-shadow(0 0 50px rgba(139,92,246,.5)); animation: pulse 2.2s ease-in-out infinite }
+    @keyframes pulse{ 0%,100%{ transform:scale(1)} 50%{ transform:scale(1.02)} }
+
+    /* Navegación */
+    .nav{ display:flex; gap:10px; margin-top:16px; justify-content:center }
+
+    /* Transiciones */
+    [data-hidden="true"]{ display:none }
+    .fade-in{ animation: fadeIn .5s ease both }
+    @keyframes fadeIn{ from{ opacity:0; transform: translateY(6px)} to{ opacity:1; transform:none } }
+
+    /* Carta */
+    .letter{ display:grid; grid-template-columns: auto 1fr; gap:16px; align-items:stretch }
+    .letter-panel{ background: rgba(2,6,23,.7); border:1px solid rgba(255,255,255,.12); border-radius:16px; padding:18px; overflow:auto; max-height:60vh }
+    .tap-hint{ color:var(--muted); font-size:.95rem }
+
+    /* Encabezado inicial */
+    .hero{ text-align:center; display:grid; place-items:center; gap:16px }
+    .hero h1{ font-size:clamp(34px,6vw,64px) }
+    .hero .hint{ color:#cbd5e1 }
+  </style>
+</head>
+<body>
+  <div class="bg" aria-hidden="true"></div>
+  <div class="galaxy" id="galaxy" aria-hidden="true"></div>
+
+  <div id="app">
+    <div class="veil" aria-hidden="true"></div>
+
+    <!-- Pantalla inicial -->
+    <section id="scene-start" class="panel fade-in" role="region" aria-label="Pantalla inicial">
+      <div class="hero">
+        <h1 class="title">Bienvenida a Namekusei 💙</h1>
+        <p class="subtitle">La música arrancará sola; si tu navegador la bloquea, sonará al iniciar el viaje.</p>
+        <button id="btnStart" class="btn btn-green" aria-label="Iniciar viaje">INICIAR VIAJE 💙</button>
+      </div>
+    </section>
+
+    <!-- Escena 1: Cápsula -->
+    <section id="scene-capsule" class="panel fade-in" data-hidden="true" role="region" aria-label="La cápsula">
+      <div style="display:grid; place-items:center; gap:16px; text-align:center; min-width:min(70vw,760px)">
+        <div class="capsule" aria-label="Cápsula flotando"></div>
+        <h2 class="title">Bienvenida a nuestro Namekusei, Loquita 💙</h2>
+        <div class="subtitle">¿Lista para lanzar la cápsula?</div>
+        <button id="btnLaunch" class="btn btn-green btn-small">Lanzar cápsula 🚀</button>
+      </div>
+    </section>
+
+    <!-- Escena 2: Goku & Bulma con nube de diálogo -->
+    <section id="scene-dialog" class="panel fade-in" data-hidden="true" role="region" aria-label="Goku y Bulma">
+      <img class="char char-left" src="goku_bulma_left.png" alt="Goku y Bulma" onerror="this.style.display='none'" />
+      <div style="max-width:900px; padding-left:min(42vw,420px);">
+        <div id="bubble" class="bubble title">No existen galaxias que igualen tu brillo 💙</div>
+        <div class="nav">
+          <button class="btn btn-outline btn-small" id="backToCapsule">⬅ Atrás</button>
+          <button class="btn btn-green btn-small" id="toJungkook">➡ Siguiente</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Escena 3: Jungkook con pastel (imagen debajo y centrada del texto) -->
+    <section id="scene-jk" class="panel fade-in" data-hidden="true" role="region" aria-label="Jungkook con pastel">
+      <div style="position:relative; min-height:50vh; display:grid; place-items:center; gap:14px; text-align:center">
+        <h2 class="title" style="max-width:90%; text-align:center">¡Feliz cumpleaños, mi Loquita hermosa! 💙</h2>
+        <img class="char glow" style="position:static; max-height:50vh; max-width:70vw;" src="jung_kook_cake.png" alt="Jungkook con pastel" onerror="this.style.display='none'" />
+        <div class="nav">
+          <button class="btn btn-outline btn-small" id="backToDialog">⬅ Atrás</button>
+          <button class="btn btn-green btn-small" id="toTulips">➡ Siguiente</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Escena 4: Goku con tulipanes morados -->
+    <section id="scene-tulips" class="panel fade-in" data-hidden="true" role="region" aria-label="Goku entrega tulipanes morados">
+      <img class="char char-left" src="goku_tulips.png" alt="Goku con tulipanes morados" onerror="this.style.display='none'" />
+      <div style="padding-left:min(42vw,420px); display:grid; gap:10px">
+        <div class="title" style="opacity:.95">Cada flor es un pensamiento bonito que tengo por ti 🌷</div>
+        <div class="title" style="opacity:.95; color:#e2e8f0">Los tulipanes crecen, como lo que siento por ti 💙</div>
+        <div class="nav">
+          <button class="btn btn-outline btn-small" id="backToJK">⬅ Atrás</button>
+          <button class="btn btn-green btn-small" id="toLetter">➡ Ver Carta 💌</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Escena 5: Carta final -->
+    <section id="scene-letter" class="panel fade-in" data-hidden="true" role="region" aria-label="Carta final">
+      <div id="letterClosed" style="display:grid; place-items:center; gap:12px; min-width:min(70vw, 760px); text-align:center">
+        <img src="letter_closed.png" alt="Carta cerrada" style="width:min(48vmin, 280px); filter:drop-shadow(0 10px 28px rgba(0,0,0,.55))" />
+        <div class="tap-hint">Toca la carta para abrirla 💌</div>
+      </div>
+
+      <div id="letterOpen" class="letter" style="display:none">
+        <img id="letterDecor" src="letter_opened_decor.png" alt="Decoración" style="width:140px; object-fit:contain; opacity:.9" onerror="this.style.display='none'" />
+        <div class="letter-panel">
+          <h2 style="margin-top:0">Para ti, Laura 💙</h2>
+          <p>
+            Feliz cumpleaños. No hay un solo día en que no piense en ti, y mucho menos un día como hoy. 
+            Eres la mujer que más amo, y aunque la vida nos tenga en un camino diferente ahora, 
+            la verdad es que mi corazón sigue siendo completamente tuyo.
+        </p>
+          <p>
+            Gracias por existir. Si alguna vez dudas, recuerda:
+            hasta en el planeta más lejano yo te eligiría, una y mil veces. 💙
+          </p>
+          <p style="margin-bottom:0"><strong>Con todo mi amor,</strong><br/>Samuel</p>
+          <div class="nav" style="margin-top:16px">
+            <button class="btn btn-outline btn-small" id="btnRestart">Reiniciar 🌌</button>
+            <button class="btn btn-green btn-small" id="btnExit">Salir 💫</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Mensaje de salida -->
+    <section id="scene-exit" class="panel fade-in" data-hidden="true" role="region" aria-label="Fin">
+      <div style="text-align:center; display:grid; place-items:center; gap:8px; min-width:min(70vw,760px)">
+        <h2 class="title">Gracias por viajar por Namekusei conmigo ✨</h2>
+        <div class="subtitle">Cuando quieras volvemos a empezar.</div>
+        <button class="btn btn-green btn-small" id="btnReturn">Volver al inicio</button>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- Audio base (música de fondo) -->
+  <audio id="bgm" src="vallenato.mp3" preload="auto" autoplay loop></audio>
+
+  <!-- Contenedor de humo -->
+  <div id="smoke" class="smoke" aria-hidden="true"></div>
+
+  <script>
+    // ---------------------------- Utilidades ----------------------------
+    const $ = (sel) => document.querySelector(sel);
+    const show = (id) => { document.querySelectorAll('#app section').forEach(s=> s.dataset.hidden = 'true'); $(id).dataset.hidden = 'false'; };
+    const ease = (el) => { el.classList.remove('fade-in'); void el.offsetWidth; el.classList.add('fade-in'); };
+
+    // Música de fondo
+    const bgm = $('#bgm');
+    bgm.volume = 1.0; // máximo por defecto
+
+    // Intento de autoplay + fallback por interacción
+    async function tryAutoplay(){ try{ await bgm.play(); }catch(e){ /* bloqueado por navegador */ } }
+    document.addEventListener('DOMContentLoaded', tryAutoplay);
+    window.addEventListener('load', tryAutoplay);
+    window.addEventListener('pointerdown', function once(){ tryAutoplay(); window.removeEventListener('pointerdown', once); }, { once:true });
+
+    // WebAudio para efectos (POOM + jingle)
+    let audioCtx;
+    function ensureCtx(){ if(!audioCtx){ const AC = window.AudioContext || window.webkitAudioContext; if (AC) audioCtx = new AC(); } return audioCtx }
+    function poom(){ try{ const ctx = ensureCtx(); if(!ctx) return; const o = ctx.createOscillator(); const g = ctx.createGain(); o.type='square'; o.frequency.setValueAtTime(90, ctx.currentTime); o.frequency.exponentialRampToValueAtTime(28, ctx.currentTime+0.25); g.gain.setValueAtTime(0.6, ctx.currentTime); g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime+0.28); o.connect(g).connect(ctx.destination); o.start(); o.stop(ctx.currentTime+0.3);}catch(e){} }
+    async function happyBirthday(){
+      try{ const head = await fetch('happy_birthday.mp3', {method:'HEAD'}); if(head.ok){ const a = new Audio('happy_birthday.mp3'); a.volume = 0.9; await a.play(); return; }}catch(e){}
+      try{ const ctx = ensureCtx(); if(!ctx) return; let t = ctx.currentTime; const notes = [392,392,440,392,523,494, 392,392,440,392,587,523];
+        for(const f of notes){ const o = ctx.createOscillator(); const g = ctx.createGain(); o.type='sine'; o.frequency.setValueAtTime(f, t); g.gain.value=0.0001; g.gain.exponentialRampToValueAtTime(0.25, t+0.03); g.gain.exponentialRampToValueAtTime(0.0001, t+0.33); o.connect(g).connect(ctx.destination); o.start(t); o.stop(t+0.35); t += 0.37; }
+      }catch(e){}
+    }
+
+    // Humo
+    function burstSmoke(amount=18){
+      const wrap = $('#smoke');
+      for(let i=0;i<amount;i++){
+        const p = document.createElement('span'); p.className='puff';
+        const x = (Math.random()*window.innerWidth)|0; const y = (window.innerHeight*0.6 + Math.random()*60)|0;
+        const size = 40 + Math.random()*100; const delay = Math.random()*60;
+        p.style.left = (x - size/2) + 'px'; p.style.top = (y - size/2) + 'px'; p.style.width = p.style.height = size+'px'; p.style.animationDelay = (delay/1000)+'s';
+        p.style.setProperty('--x', (Math.random()*40-20) + 'px'); p.style.setProperty('--y', (Math.random()*20-10)+'px');
+        wrap.appendChild(p); setTimeout(()=> p.remove(), 1200+delay);
+      }
+    }
+
+    // Nube de texto cíclica (azul)
+    const phrases = [
+    'Mi corazón es completamente tuyo, sin atajos, sin peros 💙',
+    'Eres la mujer que más amo y mi refugio favorito, Loquita 💙',
+    'Pienso en ti en todo momento, hoy más que nunca. ¡Feliz cumple! 💙',
+    'Mi lugar favorito del mundo es estar a tu lado. Siempre 💙',
+    'Eres mi felicidad, mi razón para luchar y mi cable a tierra 💙',
+    'No hay nadie como tú. Gracias por enseñarme a amar de verdad, Laura Alejandra 💙'
+    ];
+    let phraseIdx = 0; let phraseTimer;
+    function cycleBubble(){ clearInterval(phraseTimer); const el = $('#bubble'); el.textContent = phrases[phraseIdx%phrases.length]; ease(el); phraseTimer = setInterval(()=>{ phraseIdx++; el.textContent = phrases[phraseIdx%phrases.length]; ease(el); }, 2600); }
+
+    // Escena helpers
+    const go = (id) => { show(id); ease($(id)); };
+
+    // Botones de navegación / flujo
+    $('#btnStart').addEventListener('click', async () => {
+      burstSmoke();
+      setTimeout(()=>{ go('#scene-capsule'); }, 500);
+    });
+
+    $('#btnLaunch').addEventListener('click', ()=>{ poom(); burstSmoke(26); setTimeout(()=>{ go('#scene-dialog'); cycleBubble(); }, 520); });
+
+    $('#backToCapsule').addEventListener('click', ()=>{ go('#scene-capsule'); clearInterval(phraseTimer); });
+    $('#toJungkook').addEventListener('click', ()=>{ go('#scene-jk'); clearInterval(phraseTimer); happyBirthday(); });
+
+    $('#backToDialog').addEventListener('click', ()=>{ go('#scene-dialog'); cycleBubble(); });
+    $('#toTulips').addEventListener('click', ()=>{ go('#scene-tulips'); });
+
+    $('#backToJK').addEventListener('click', ()=>{ go('#scene-jk'); });
+    $('#toLetter').addEventListener('click', ()=>{ go('#scene-letter'); document.getElementById('galaxy').style.opacity = 1; });
+
+    // Carta abrir
+    const letterClosed = $('#letterClosed'); const letterOpen = $('#letterOpen');
+    letterClosed.addEventListener('click', ()=>{
+      burstSmoke(22); letterClosed.style.display='none'; letterOpen.style.display='grid';
+      letterOpen.animate([{ transform:'scale(.92)', opacity:.0 },{ transform:'scale(1)', opacity:1 }], { duration: 420, easing:'cubic-bezier(.2,.8,.2,1)' });
+    });
+
+    // Reiniciar / Salir
+    $('#btnRestart').addEventListener('click', ()=>{ document.getElementById('galaxy').style.opacity = 0; letterOpen.style.display='none'; letterClosed.style.display='grid'; burstSmoke(16); bgm.currentTime = 0; go('#scene-start'); });
+    $('#btnExit').addEventListener('click', ()=>{ document.getElementById('galaxy').style.opacity = 0; go('#scene-exit'); });
+    $('#btnReturn').addEventListener('click', ()=>{ go('#scene-start'); });
+
+    // Teclado (sin play/pausa ya que no hay reproductor)
+    document.addEventListener('keydown', (e)=>{
+      if(e.key==='ArrowRight'){
+        if(!$('#scene-capsule').dataset.hidden) $('#btnLaunch').click();
+        else if(!$('#scene-dialog').dataset.hidden) $('#toJungkook').click();
+        else if(!$('#scene-jk').dataset.hidden) $('#toTulips').click();
+        else if(!$('#scene-tulips').dataset.hidden) $('#toLetter').click();
+      } else if(e.key==='ArrowLeft'){
+        if(!$('#scene-dialog').dataset.hidden) $('#backToCapsule').click();
+        else if(!$('#scene-jk').dataset.hidden) $('#backToDialog').click();
+        else if(!$('#scene-tulips').dataset.hidden) $('#backToJK').click();
+      }
+    });
+  </script>
+</body>
+</html>
