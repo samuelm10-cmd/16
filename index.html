@@ -58,14 +58,7 @@
 
     /* Nube de diálogo */
     .bubble{ position:relative; background:rgba(255,255,255,.09); border:1px solid rgba(255,255,255,.18); padding:16px 18px; border-radius:16px; max-width:min(66ch, 80vw); backdrop-filter:blur(6px) }
-    .bubble:after{ content:\"\"; position:absolute; left:22px; bottom:-12px; width:22px; height:22px; background:inherit; border-left:inherit; border-bottom:inherit; transform:rotate(45deg)}
-
-    /* Layout responsivo para escenas con imagen + texto */
-    .scene-split{ display:grid; grid-template-columns:1fr; gap:16px; align-items:center }
-    .scene-split .img-wrap{ display:grid; place-items:center }
-    .scene-split .text{ display:grid; gap:12px }
-    .char-fluid{ max-width:min(85vw,520px); max-height:55vh; width:100%; height:auto; object-fit:contain; filter:drop-shadow(0 18px 38px rgba(0,0,0,.6)) }
-    @media (min-width: 900px){ .scene-split{ grid-template-columns:min(420px,40%) 1fr } }
+    .bubble:after{ content:""; position:absolute; left:22px; bottom:-12px; width:22px; height:22px; background:inherit; border-left:inherit; border-bottom:inherit; transform:rotate(45deg)}
 
     /* Imágenes de personajes */
     .char{ max-height:60vh; max-width:70vw; object-fit:contain; filter:drop-shadow(0 18px 38px rgba(0,0,0,.6)) }
@@ -123,16 +116,12 @@
 
     <!-- Escena 2: Goku & Bulma con nube de diálogo -->
     <section id="scene-dialog" class="panel fade-in" data-hidden="true" role="region" aria-label="Goku y Bulma">
-      <div class="scene-split">
-        <div class="img-wrap">
-          <img class="char-fluid" src="goku_bulma_left.png" alt="Goku y Bulma" onerror="this.style.display='none'" />
-        </div>
-        <div class="text">
-          <div id="bubble" class="bubble title">No existen galaxias que igualen tu brillo 💙</div>
-          <div class="nav">
-            <button class="btn btn-outline btn-small" id="backToCapsule">⬅ Atrás</button>
-            <button class="btn btn-green btn-small" id="toJungkook">➡ Siguiente</button>
-          </div>
+      <img class="char char-left" src="goku_bulma_left.png" alt="Goku y Bulma" onerror="this.style.display='none'" />
+      <div style="max-width:900px; padding-left:min(42vw,420px);">
+        <div id="bubble" class="bubble title">No existen galaxias que igualen tu brillo 💙</div>
+        <div class="nav">
+          <button class="btn btn-outline btn-small" id="backToCapsule">⬅ Atrás</button>
+          <button class="btn btn-green btn-small" id="toJungkook">➡ Siguiente</button>
         </div>
       </div>
     </section>
@@ -151,17 +140,13 @@
 
     <!-- Escena 4: Goku con tulipanes morados -->
     <section id="scene-tulips" class="panel fade-in" data-hidden="true" role="region" aria-label="Goku entrega tulipanes morados">
-      <div class="scene-split">
-        <div class="img-wrap">
-          <img class="char-fluid" src="goku_tulips.png" alt="Goku con tulipanes morados" onerror="this.style.display='none'" />
-        </div>
-        <div class="text" style="display:grid; gap:10px">
-          <div class="title" style="opacity:.95">Cada flor es un pensamiento bonito que tengo por ti 🌷</div>
-          <div class="title" style="opacity:.95; color:#e2e8f0">Los tulipanes crecen, como lo que siento por ti 💙</div>
-          <div class="nav">
-            <button class="btn btn-outline btn-small" id="backToJK">⬅ Atrás</button>
-            <button class="btn btn-green btn-small" id="toLetter">➡ Ver Carta 💌</button>
-          </div>
+      <img class="char char-left" src="goku_tulips.png" alt="Goku con tulipanes morados" onerror="this.style.display='none'" />
+      <div style="padding-left:min(42vw,420px); display:grid; gap:10px">
+        <div class="title" style="opacity:.95">Cada flor es un pensamiento bonito que tengo por ti 🌷</div>
+        <div class="title" style="opacity:.95; color:#e2e8f0">Los tulipanes crecen, como lo que siento por ti 💙</div>
+        <div class="nav">
+          <button class="btn btn-outline btn-small" id="backToJK">⬅ Atrás</button>
+          <button class="btn btn-green btn-small" id="toLetter">➡ Ver Carta 💌</button>
         </div>
       </div>
     </section>
@@ -207,7 +192,7 @@
   </div>
 
   <!-- Audio base (música de fondo) -->
-  <audio id=\"bgm\" src=\"vallenato.mp3\" preload=\"auto\" autoplay playsinline loop></audio>
+  <audio id="bgm" src="vallenato.mp3" preload="auto" autoplay loop></audio>
 
   <!-- Contenedor de humo -->
   <div id="smoke" class="smoke" aria-hidden="true"></div>
@@ -223,11 +208,10 @@
     bgm.volume = 1.0; // máximo por defecto
 
     // Intento de autoplay + fallback por interacción
-    async function resumeAudio(){ try{ bgm.muted = false; bgm.volume = 1.0; if(bgm.paused) await bgm.play(); }catch(e){} }
     async function tryAutoplay(){ try{ await bgm.play(); }catch(e){ /* bloqueado por navegador */ } }
     document.addEventListener('DOMContentLoaded', tryAutoplay);
     window.addEventListener('load', tryAutoplay);
-    window.addEventListener('pointerdown', function once(){ resumeAudio(); window.removeEventListener('pointerdown', once); }, { once:true });
+    window.addEventListener('pointerdown', function once(){ tryAutoplay(); window.removeEventListener('pointerdown', once); }, { once:true });
 
     // WebAudio para efectos (POOM + jingle)
     let audioCtx;
@@ -254,7 +238,7 @@
     }
 
     // Nube de texto cíclica (azul)
-   const phrases = [
+    const phrases = [
     'Mi corazón es completamente tuyo, sin atajos, sin peros 💙',
     'Eres la mujer que más amo y mi refugio favorito, Loquita 💙',
     'Pienso en ti en todo momento, hoy más que nunca. ¡Feliz cumple! 💙',
@@ -270,7 +254,6 @@
 
     // Botones de navegación / flujo
     $('#btnStart').addEventListener('click', async () => {
-      await resumeAudio();
       burstSmoke();
       setTimeout(()=>{ go('#scene-capsule'); }, 500);
     });
